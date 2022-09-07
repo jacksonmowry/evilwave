@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <utility>
 #include "parse.hpp"
+#include "oscilators.cpp"
 
 int main(int argc, char *argv[]) {
   // filename
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]) {
     // }
     // printf("Mine: %f\n", temp(notePtr, sheet[0], fPhase, fSampleRate));
     // printf("Other: %f\n", AdvanceOscilator_Sine(fPhase2, sheet[0][notePtr].first, fSampleRate));
-    pData[nIndex] = temp(notePtr, sheet[0], fPhase, fSampleRate);
+    // pData[nIndex] = temp(notePtr, sheet[0], fPhase, fSampleRate);
     // pData[nIndex] = AdvanceOscilator_Sine(fPhase, sheet[0][notePtr].first, fSampleRate);
     // pData[nIndex+1] = temp(notePtr, sheet[1], &fPhase2, fSampleRate) * 0.1f;
     // pData[nIndex+2] = temp(notePtr, sheet[2], &fPhase3, fSampleRate) * 0.1f;
