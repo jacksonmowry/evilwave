@@ -1,4 +1,3 @@
-#include "main.hpp"
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -8,6 +7,7 @@
 #include <stdlib.h>
 #include <utility>
 #include "parse.hpp"
+#include "write.cpp"
 #include "oscilators.cpp"
 
 int main(int argc, char *argv[]) {
@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
 
   // phase ocilator
   float fPhase = 0;
-  float fPhase2 = 0;
+  // float fPhase2 = 0;
   // float fPhase3 = 0;
   // float fPhase4 = 0;
   // float fPhase5 = 0;
@@ -42,33 +42,40 @@ int main(int argc, char *argv[]) {
   // Text note input
   std::vector<std::string> output = readFile(filename);
   std::vector<std::vector<std::pair<float, bool>>> sheet = parseSheet(output);
-
-
+  std::vector<float> sheetHD;
+  printf("%f\n", CalcFrequency(-5, 0));
+  exit(1);
+  for (int i = 0; i < sheet.size(); i++)  {
+    for (int j = 0; j < sheet[i].size(); j++) {
+      if (j==0) {
+        sheetHD.push_back(sheet[i][j].first);
+        continue;
+      }
+      printf("Freq: %f Artic: %d\n", sheet[i][j].first, sheet[i][j].second);
+      sheetHD.push_back((sheet[i][j].first));
+      if (j < (sheet[i].size()-1) && sheet[i][j+1].second == true && sheet[i][j].first != 0) {
+        printf("Cutting note short for artic\n");
+        sheetHD.push_back(CalcFrequency(0, 0));
+      }
+      else {
+        sheetHD.push_back(sheet[i][j].first);
+      }
+    }
+  }
 
   for (int nIndex = 0; nIndex < nNumSamples; nIndex += 1) {
-    // if (tracker == 0 && sheet[0][notePtr].second == true && notePtr != 0) {
-    //   int backwardStep = 1000; // 500 samples backwards
-    //   for (int i = backwardStep; i > 0; i--) {
-    //     float tmp = pData[nIndex-i];
-    //     float data = (float)tmp * (float)(((float)i/(float)backwardStep));
-    //     pData[nIndex-i] = data;
-    //   }
-    //   fPhase = 0;
-    // }
-    // printf("Mine: %f\n", temp(notePtr, sheet[0], fPhase, fSampleRate));
-    // printf("Other: %f\n", AdvanceOscilator_Sine(fPhase2, sheet[0][notePtr].first, fSampleRate));
-    // pData[nIndex] = temp(notePtr, sheet[0], fPhase, fSampleRate);
-    // pData[nIndex] = AdvanceOscilator_Sine(fPhase, sheet[0][notePtr].first, fSampleRate);
-    // pData[nIndex+1] = temp(notePtr, sheet[1], &fPhase2, fSampleRate) * 0.1f;
-    // pData[nIndex+2] = temp(notePtr, sheet[2], &fPhase3, fSampleRate) * 0.1f;
-    // pData[nIndex+3] = temp(notePtr, sheet[3], &fPhase4, fSampleRate) * 0.1f;
-    // pData[nIndex+4] = temp(notePtr, sheet[4], &fPhase5, fSampleRate) * 0.1f;
-    tracker++;                  //
-    if (tracker >= (5512.5f)) {
+    // Selects the oscilator from text input
+    // outputs frequency @ time
+    // tracker++ increments the pointer of samples per desired note length
+    pData[nIndex] = temp(notePtr, sheetHD, fPhase, fSampleRate);
+    tracker++;
+    // Moves to the next note based on desired note length
+    if (tracker >= (5512.5f/(float)2)) {
       tracker = 0;
       notePtr++;
     }
-    if (notePtr >= (int)sheet[0].size() - 1) {
+    // Stop when we reach the end of the sheet
+    if (notePtr >= (int)sheetHD.size() - 1) {
       break;
     }
   }

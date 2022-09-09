@@ -1,3 +1,4 @@
+#include <vector>
 #include "oscilators.hpp"
 #define _USE_MATH_DEFINES
 #include <math.h>
@@ -64,5 +65,23 @@ float AdvanceOscilator_Noise(float &fPhase, float fFrequency, float fSampleRate,
   }
   else {
     return fLastValue;
+  }
+}
+
+float temp(int index, const std::vector<float> &input, float &phase, float sampleRate) {
+  int oscilator = input[0];
+  switch (oscilator) {
+  case 1:
+    return AdvanceOscilator_Sine(phase, input[index + 1], sampleRate);
+  case 2:
+    return AdvanceOscilator_Triangle(phase, input[index + 1], sampleRate);
+  case 3:
+    return AdvanceOscilator_Saw(phase, input[index + 1], sampleRate);
+  case 4:
+    return AdvanceOscilator_Square(phase, input[index + 1], sampleRate);
+  case 5:
+    return AdvanceOscilator_Noise(phase, input[index + 1], sampleRate, 0.0f);
+  default:
+    return 0;
   }
 }
